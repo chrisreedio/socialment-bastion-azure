@@ -55,7 +55,7 @@ class SocialmentBastionAzureServiceProvider extends PackageServiceProvider
                         // $command->call('bastion:install');
 
                         // if ($command->ask('Would you like to inject the Azure Socialment .env parameters?', 'yes')) {
-                        $command->comment("Patching .env files...");
+                        $command->comment('Patching .env files...');
                         $command->call('azure:install:env');
                         // }
 
