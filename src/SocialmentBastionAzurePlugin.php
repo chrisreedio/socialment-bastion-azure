@@ -1,15 +1,15 @@
 <?php
 
-namespace VendorName\Skeleton;
+namespace ChrisReedIO\SocialmentBastionAzure;
 
 use Filament\Contracts\Plugin;
 use Filament\Panel;
 
-class SkeletonPlugin implements Plugin
+class SocialmentBastionAzurePlugin implements Plugin
 {
     public function getId(): string
     {
-        return 'skeleton';
+        return 'socialment-bastion-azure';
     }
 
     public function register(Panel $panel): void

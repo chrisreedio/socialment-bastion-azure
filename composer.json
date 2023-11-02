@@ -1,31 +1,30 @@
 {
-    "name": ":vendor_slug/:package_slug",
-    "description": ":package_description",
+    "name": "chrisreedio/socialment-bastion-azure",
+    "description": "Provides a Bridge between Socialment, Bastion, and Azure AD.",
     "keywords": [
-        ":vendor_name",
+        "chrisreedio",
         "laravel",
-        ":package_slug"
+        "socialment-bastion-azure"
     ],
-    "homepage": "https://github.com/:vendor_slug/:package_slug",
+    "homepage": "https://github.com/chrisreedio/socialment-bastion-azure",
     "support": {
-        "issues": "https://github.com/:vendor_slug/:package_slug/issues",
-        "source": "https://github.com/:vendor_slug/:package_slug"
+        "issues": "https://github.com/chrisreedio/socialment-bastion-azure/issues",
+        "source": "https://github.com/chrisreedio/socialment-bastion-azure"
     },
     "license": "MIT",
     "authors": [
         {
-            "name": ":author_name",
-            "email": "author@domain.com",
+            "name": "Chris Reed",
+            "email": "chris@reedtech.us",
             "role": "Developer"
         }
     ],
     "require": {
         "php": "^8.1",
+        "chrisreedio/socialment": "^3.3",
         "filament/filament": "^3.0",
-        "filament/forms": "^3.0",
-        "filament/tables": "^3.0",
-        "spatie/laravel-package-tools": "^1.15.0",
-        "illuminate/contracts": "^10.0"
+        "illuminate/contracts": "^10.0",
+        "spatie/laravel-package-tools": "^1.15.0"
     },
     "require-dev": {
         "laravel/pint": "^1.0",
@@ -37,18 +36,17 @@
         "pestphp/pest-plugin-laravel": "^2.0",
         "phpstan/extension-installer": "^1.1",
         "phpstan/phpstan-deprecation-rules": "^1.0",
-        "phpstan/phpstan-phpunit": "^1.0",
-        "spatie/laravel-ray": "^1.26"
+        "phpstan/phpstan-phpunit": "^1.0"
     },
     "autoload": {
         "psr-4": {
-            "VendorName\\Skeleton\\": "src/",
-            "VendorName\\Skeleton\\Database\\Factories\\": "database/factories/"
+            "ChrisReedIO\\SocialmentBastionAzure\\": "src/",
+            "ChrisReedIO\\SocialmentBastionAzure\\Database\\Factories\\": "database/factories/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "VendorName\\Skeleton\\Tests\\": "tests/"
+            "ChrisReedIO\\SocialmentBastionAzure\\Tests\\": "tests/"
         }
     },
     "scripts": {
@@ -68,10 +66,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "VendorName\\Skeleton\\SkeletonServiceProvider"
+                "ChrisReedIO\\SocialmentBastionAzure\\SocialmentBastionAzureServiceProvider"
             ],
             "aliases": {
-                "Skeleton": "VendorName\\Skeleton\\Facades\\Skeleton"
+                "SocialmentBastionAzure": "ChrisReedIO\\SocialmentBastionAzure\\Facades\\SocialmentBastionAzure"
             }
         }
     },

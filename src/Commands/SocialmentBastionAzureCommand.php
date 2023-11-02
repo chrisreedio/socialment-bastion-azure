@@ -1,12 +1,12 @@
 <?php
 
-namespace VendorName\Skeleton\Commands;
+namespace ChrisReedIO\SocialmentBastionAzure\Commands;
 
 use Illuminate\Console\Command;
 
-class SkeletonCommand extends Command
+class SocialmentBastionAzureCommand extends Command
 {
-    public $signature = 'skeleton';
+    public $signature = 'socialment-bastion-azure';
 
     public $description = 'My command';
 
