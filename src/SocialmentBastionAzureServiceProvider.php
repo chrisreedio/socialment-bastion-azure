@@ -13,11 +13,11 @@ use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Filesystem\Filesystem;
 use Livewire\Features\SupportTesting\Testable;
+use SocialiteProviders\Azure\AzureExtendSocialite;
+use SocialiteProviders\Manager\SocialiteWasCalled;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use SocialiteProviders\Manager\SocialiteWasCalled;
-use SocialiteProviders\Azure\AzureExtendSocialite;
 
 use function config_path;
 use function database_path;
@@ -230,7 +230,7 @@ class SocialmentBastionAzureServiceProvider extends PackageServiceProvider
         $listen = $this->app['events']->getListeners(SocialiteWasCalled::class) ?? [];
 
         // Define your listener if it's not already present
-        if (!in_array(AzureExtendSocialite::class . '@handle', $listen)) {
+        if (! in_array(AzureExtendSocialite::class . '@handle', $listen)) {
             $this->app['events']->listen(
                 SocialiteWasCalled::class,
                 AzureExtendSocialite::class . '@handle'
