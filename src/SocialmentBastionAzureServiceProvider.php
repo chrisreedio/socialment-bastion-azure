@@ -94,7 +94,7 @@ class SocialmentBastionAzureServiceProvider extends PackageServiceProvider
 
         $configFileName = 'services';
 
-        if (file_exists($package->basePath("/../config"))) {
+        if (file_exists($package->basePath('/../config'))) {
             $package->hasConfigFile(['services']);
         }
 
