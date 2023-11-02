@@ -32,7 +32,11 @@ class SocialmentBastionAzureServiceProvider extends PackageServiceProvider
         $package->name(static::$name)
             ->hasCommands($this->getCommands())
             ->hasInstallCommand(function (InstallCommand $command) {
-                // $command
+                $command
+                    ->startWith(function (InstallCommand $command) {
+                        $command->comment('Running Bastion\'s Install...');
+                        $command->call('bastion:install');
+                    });
                 // ->publishConfigFile()
                 // ->publishMigrations()
                 // ->askToRunMigrations()
