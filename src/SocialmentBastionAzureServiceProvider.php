@@ -64,6 +64,15 @@ class SocialmentBastionAzureServiceProvider extends PackageServiceProvider
                         $command->call('azure:install:env');
                         // }
 
+                        if ($command->ask('Publish the Bastion Seeder(s)?')) {
+                            $command->comment('Publishing Bastion\'s Seeders...');
+                            $command->call('vendor:publish', [
+                                '--provider' => 'ChrisReedIO\Bastion\BastionServiceProvider',
+                                '--tag' => 'bastion-seeders',
+                                '--force' => false,
+                            ]);
+                        }
+
                         // if ($command->ask('Would you like to force publish the Services config file?')) {
                         //     // This will overwrite the config file even if it already exists
                         //     $command->comment('Publishing Socialment\'s service config file...');
@@ -83,10 +92,9 @@ class SocialmentBastionAzureServiceProvider extends PackageServiceProvider
                 // ->askToStarRepoOnGitHub('chrisreedio/socialment-bastion-azure');
             });
 
-        // $configFileName = $package->shortName();
         $configFileName = 'services';
 
-        if (file_exists($package->basePath("/../config/{$configFileName}.php"))) {
+        if (file_exists($package->basePath("/../config"))) {
             $package->hasConfigFile(['services']);
         }
 
@@ -111,7 +119,7 @@ class SocialmentBastionAzureServiceProvider extends PackageServiceProvider
 
     public function packageRegistered(): void
     {
-        $this->mergeConfigFrom(__DIR__ . '/../config/services.php', 'services');
+        // $this->mergeConfigFrom(__DIR__ . '/../config/services.php', 'services');
     }
 
     public function packageBooted(): void
