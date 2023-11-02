@@ -21,6 +21,7 @@
     ],
     "require": {
         "php": "^8.1",
+        "chrisreedio/bastion": "dev-dev",
         "chrisreedio/socialment": "^3.3",
         "filament/filament": "^3.0",
         "illuminate/contracts": "^10.0",
