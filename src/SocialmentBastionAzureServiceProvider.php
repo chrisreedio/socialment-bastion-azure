@@ -2,6 +2,11 @@
 
 namespace ChrisReedIO\SocialmentBastionAzure;
 
+use ChrisReedIO\AzureGraph\GraphConnector;
+use ChrisReedIO\AzureGraph\Requests\Users\Group\MemberOfRequest;
+use ChrisReedIO\Socialment\Exceptions\AbortedLoginException;
+use ChrisReedIO\Socialment\Facades\Socialment;
+use ChrisReedIO\Socialment\Models\ConnectedAccount;
 use ChrisReedIO\SocialmentBastionAzure\Commands\AzureEnvironmentInstallCommand;
 use ChrisReedIO\SocialmentBastionAzure\Commands\SocialmentBastionAzureCommand;
 use ChrisReedIO\SocialmentBastionAzure\Testing\TestsSocialmentBastionAzure;
@@ -19,6 +24,7 @@ use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
+use Spatie\Permission\Models\Role;
 use function config_path;
 use function database_path;
 use function file_exists;
@@ -135,6 +141,26 @@ class SocialmentBastionAzureServiceProvider extends PackageServiceProvider
     public function packageBooted(): void
     {
         $this->mergeListeners();
+
+        // Hook the login process and sync the groups
+        app(Socialment::class)::preLogin(function (ConnectedAccount $connectedAccount) {
+            // Handle custom post login logic here.
+            $graph = new GraphConnector($connectedAccount->token);
+            $paginator = $graph->paginate(new MemberOfRequest());
+            $adGroups = $paginator->collect();
+
+            // Dump the user's groups
+            // dd($adGroups->pluck('displayName')->all());
+
+            $roles = Role::all()->filter(function ($role) use ($adGroups) {
+                return $adGroups->pluck('displayName')->contains($role->sso_group);
+            });
+            $connectedAccount->user->roles()->sync($roles);
+
+            if ($connectedAccount->user->roles->isEmpty()) {
+                throw new AbortedLoginException('You are not authorized to access this application.');
+            }
+        });
         // Asset Registration
         // FilamentAsset::register(
         //     $this->getAssets(),
@@ -230,7 +256,7 @@ class SocialmentBastionAzureServiceProvider extends PackageServiceProvider
         $listen = $this->app['events']->getListeners(SocialiteWasCalled::class) ?? [];
 
         // Define your listener if it's not already present
-        if (! in_array(AzureExtendSocialite::class . '@handle', $listen)) {
+        if (!in_array(AzureExtendSocialite::class . '@handle', $listen)) {
             $this->app['events']->listen(
                 SocialiteWasCalled::class,
                 AzureExtendSocialite::class . '@handle'

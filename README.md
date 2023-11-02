@@ -26,17 +26,30 @@ Include this plugin in your panel configuration:
 
 ```php
 $panel
-	->plugins([
-		// ... Other Plugins
-		\ChrisReedIO\Bastion\BastionPlugin::make(),
-		\ChrisReedIO\Socialment\SocialmentPlugin::make()
+    ->plugins([
+        // ... Other Plugins
+        \ChrisReedIO\Bastion\BastionPlugin::make(),
+        \ChrisReedIO\Socialment\SocialmentPlugin::make()
             ->registerProvider('azure', 'fab-microsoft', 'Azure Active Directory'),
 	])
 ```
 
+Remember to add the Spatie `HasRoles` trait to your `User` model.
+
+```php
+use Spatie\Permission\Traits\HasRoles;
+
+class User extends Authenticatable
+{
+    use HasRoles;
+}
+```
+
 This additional _glue_ package will automagically hook the pre-login callbacks from Socialment into Bastion's Roles via the SSO Group field.
 
-Also if you're choosing to use the seeder(s) make sure you add the `RoleSeeder` to your `DatabaseSeeder.php` like this:
+### Seeder
+
+If you're choosing to use the seeder(s) make sure you add the `RoleSeeder` to your `DatabaseSeeder.php` like this:
 
 ```php
 $this->call([
@@ -45,19 +58,28 @@ $this->call([
 ]);
 ```
 
-### Individual Steps (Shouldn't be necessary)
+Also don't forget to edit the `RoleSeeder.php` to add your own SSO Groups to each Role.
 
-You can publish and run the migrations with:
+Some example roles have been placed there for you.
 
-```bash
-php artisan vendor:publish --tag="socialment-bastion-azure-migrations"
-php artisan migrate
+## Azure App Registration
+
+### Redirect URL
+
+Ensure that you configure the redirect URL on your app registration and that it matches the value in your `.env` file.
+
+```env
+AZURE_REDIRECT_URI=https://yourdomain.com/login/azure/callback
 ```
-Optionally, you can publish the views using
 
-```bash
-php artisan vendor:publish --tag="socialment-bastion-azure-views"
-```
+### Azure Permissions
+
+You will need to grant your app registration the following permissions:
+
+- `Directory.Read.All`
+- `GroupMember.Read.All`
+- `User.Read`
+
 
 ### Config
 
@@ -65,7 +87,7 @@ By default, the config does not get published upon install.
 
 This is the contents of the published config `services.php` file:
 
-_It is just the stock services file with the `azure` block added_
+_It is just the stock services file with the `azure` block added._
 
 ```php
 return [
