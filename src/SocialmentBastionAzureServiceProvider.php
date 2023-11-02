@@ -40,25 +40,36 @@ class SocialmentBastionAzureServiceProvider extends PackageServiceProvider
             ->hasInstallCommand(function (InstallCommand $command) {
                 $command
                     ->startWith(function (InstallCommand $command) {
-                        $command->comment("Now running Socialment's Install...");
-                        $command->call('socialment:install');
+                        $command->comment('Publishing Socialment\'s Migrations...');
+                        // $command->call('socialment:install');
+                        $command->call('vendor:publish', [
+                            '--tag' => 'socialment-migrations',
+                        ]);
 
-                        $command->comment('Running Bastion\'s Install...');
-                        $command->call('bastion:install');
+                        $command->comment('Publishing Spatie\'s Migrations...');
+                        $command->call('vendor:publish', [
+                            // '--provider' => 'Spatie\Permission\PermissionServiceProvider',
+                            // '--tag' => 'migrations',
+                            '--tag' => 'permission-migrations',
+                        ]);
 
-                        if ($command->ask('Would you like to inject the Azure Socialment .env parameters?', 'yes')) {
-                            $command->call('azure:install:env');
-                        }
+                        // $command->comment('Running Bastion\'s Install...');
+                        // $command->call('bastion:install');
 
-                        if ($command->ask('Would you like to force publish the Services config file?')) {
-                            // This will overwrite the config file even if it already exists
-                            $command->comment('Publishing Socialment\'s service config file...');
-                            $command->call('vendor:publish', [
-                                // '--provider' => 'ChrisReedIO\Socialment\SocialmentServiceProvider',
-                                '--tag' => 'socialment-bastion-azure-config',
-                                '--force' => true,
-                            ]);
-                        }
+                        // if ($command->ask('Would you like to inject the Azure Socialment .env parameters?', 'yes')) {
+                        $command->comment("Patching .env files...");
+                        $command->call('azure:install:env');
+                        // }
+
+                        // if ($command->ask('Would you like to force publish the Services config file?')) {
+                        //     // This will overwrite the config file even if it already exists
+                        //     $command->comment('Publishing Socialment\'s service config file...');
+                        //     $command->call('vendor:publish', [
+                        //         // '--provider' => 'ChrisReedIO\Socialment\SocialmentServiceProvider',
+                        //         '--tag' => 'socialment-bastion-azure-config',
+                        //         '--force' => true,
+                        //     ]);
+                        // }
                     })
                     ->endWith(function (InstallCommand $command) {
 
@@ -97,11 +108,12 @@ class SocialmentBastionAzureServiceProvider extends PackageServiceProvider
 
     public function packageRegistered(): void
     {
+        $this->mergeConfigFrom(__DIR__ . '/../config/services.php', 'services');
     }
 
     public function packageBooted(): void
     {
-        $this->mergeConfigFrom(__DIR__ . '/../config/services.php', 'services');
+
         // Asset Registration
         // FilamentAsset::register(
         //     $this->getAssets(),
