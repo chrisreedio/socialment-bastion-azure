@@ -28,12 +28,22 @@ Include this plugin in your panel configuration:
 $panel
 	->plugins([
 		// ... Other Plugins
+		\ChrisReedIO\Bastion\BastionPlugin::make(),
 		\ChrisReedIO\Socialment\SocialmentPlugin::make()
             ->registerProvider('azure', 'fab-microsoft', 'Azure Active Directory'),
 	])
 ```
 
-This additional _glue_ package will automagically hook the pre-login callbacks from Socialment into Bastion's Roles via the SSO Group field. 
+This additional _glue_ package will automagically hook the pre-login callbacks from Socialment into Bastion's Roles via the SSO Group field.
+
+Also if you're choosing to use the seeder(s) make sure you add the `RoleSeeder` to your `DatabaseSeeder.php` like this:
+
+```php
+$this->call([
+    // ... Other Seeders
+    RoleSeeder::class,
+]);
+```
 
 ### Individual Steps (Shouldn't be necessary)
 
