@@ -4,6 +4,7 @@ namespace ChrisReedIO\SocialmentBastionAzure\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
+
 use function base_path;
 use function implode;
 
@@ -25,7 +26,7 @@ class AzureEnvironmentInstallCommand extends Command
 
         $additionalLines = [
             '',
-            "# Socialment - Azure Provider Variables",
+            '# Socialment - Azure Provider Variables',
             'AZURE_TENANT_ID=""',
             'AZURE_CLIENT_ID=""',
             'AZURE_CLIENT_SECRET=""',
@@ -48,12 +49,14 @@ class AzureEnvironmentInstallCommand extends Command
 
         if (str_contains($envContents, $additionalLines[$existingLineCheck])) {
             $this->info("\t" . basename($file) . ' already patched.');
+
             return false;
         }
 
         $this->comment('Injecting Socialment - Azure Provider Environment Variables into the ' . basename($file) . ' file...');
         File::append($file, implode("\n", $additionalLines));
         $this->info("\t" . basename($file) . ' updated successfully.');
+
         return true;
     }
 }
