@@ -16,6 +16,8 @@ use Livewire\Features\SupportTesting\Testable;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
+use SocialiteProviders\Manager\SocialiteWasCalled;
+use SocialiteProviders\Azure\AzureExtendSocialite;
 
 use function config_path;
 use function database_path;
@@ -132,7 +134,7 @@ class SocialmentBastionAzureServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
-
+        $this->mergeListeners();
         // Asset Registration
         // FilamentAsset::register(
         //     $this->getAssets(),
@@ -220,5 +222,19 @@ class SocialmentBastionAzureServiceProvider extends PackageServiceProvider
         return [
             // 'create_socialment-bastion-azure_table',
         ];
+    }
+
+    protected function mergeListeners(): void
+    {
+        // Retrieve the existing listeners
+        $listen = $this->app['events']->getListeners(SocialiteWasCalled::class) ?? [];
+
+        // Define your listener if it's not already present
+        if (!in_array(AzureExtendSocialite::class . '@handle', $listen)) {
+            $this->app['events']->listen(
+                SocialiteWasCalled::class,
+                AzureExtendSocialite::class . '@handle'
+            );
+        }
     }
 }
