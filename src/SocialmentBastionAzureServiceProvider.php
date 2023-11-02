@@ -41,18 +41,23 @@ class SocialmentBastionAzureServiceProvider extends PackageServiceProvider
                         $command->comment('Publishing Socialment\'s Migrations...');
                         // $command->call('socialment:install');
                         $command->call('vendor:publish', [
+                            '--provider' => 'ChrisReedIO\Socialment\SocialmentServiceProvider',
                             '--tag' => 'socialment-migrations',
                         ]);
 
                         $command->comment('Publishing Spatie\'s Migrations...');
                         $command->call('vendor:publish', [
-                            // '--provider' => 'Spatie\Permission\PermissionServiceProvider',
-                            // '--tag' => 'migrations',
+                            '--provider' => 'Spatie\Permission\PermissionServiceProvider',
                             '--tag' => 'permission-migrations',
                         ]);
 
                         // $command->comment('Running Bastion\'s Install...');
                         // $command->call('bastion:install');
+                        $command->comment('Publishing Bastion\'s Migrations...');
+                        $command->call('vendor:publish', [
+                            '--provider' => 'ChrisReedIO\Bastion\BastionServiceProvider',
+                            '--tag' => 'bastion-migrations',
+                        ]);
 
                         // if ($command->ask('Would you like to inject the Azure Socialment .env parameters?', 'yes')) {
                         $command->comment("Patching .env files...");
