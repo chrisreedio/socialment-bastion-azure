@@ -41,8 +41,7 @@
     },
     "autoload": {
         "psr-4": {
-            "ChrisReedIO\\SocialmentBastionAzure\\": "src/",
-            "ChrisReedIO\\SocialmentBastionAzure\\Database\\Factories\\": "database/factories/"
+            "ChrisReedIO\\SocialmentBastionAzure\\": "src/"
         }
     },
     "autoload-dev": {
