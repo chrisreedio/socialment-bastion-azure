@@ -12,14 +12,12 @@ use Filament\Support\Assets\Js;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Filesystem\Filesystem;
-use Laravel\Prompts\Output\ConsoleOutput;
 use Livewire\Features\SupportTesting\Testable;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Symfony\Component\Console\Input\ArrayInput;
+
 use function config_path;
-use function database_path;
 use function file_exists;
 
 class SocialmentBastionAzureServiceProvider extends PackageServiceProvider
