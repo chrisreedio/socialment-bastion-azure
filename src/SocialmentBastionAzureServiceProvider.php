@@ -33,10 +33,10 @@ class SocialmentBastionAzureServiceProvider extends PackageServiceProvider
             ->hasCommands($this->getCommands())
             ->hasInstallCommand(function (InstallCommand $command) {
                 // $command
-                    // ->publishConfigFile()
-                    // ->publishMigrations()
-                    // ->askToRunMigrations()
-                    // ->askToStarRepoOnGitHub('chrisreedio/socialment-bastion-azure');
+                // ->publishConfigFile()
+                // ->publishMigrations()
+                // ->askToRunMigrations()
+                // ->askToStarRepoOnGitHub('chrisreedio/socialment-bastion-azure');
             });
 
         $configFileName = $package->shortName();
