@@ -32,11 +32,11 @@ class SocialmentBastionAzureServiceProvider extends PackageServiceProvider
         $package->name(static::$name)
             ->hasCommands($this->getCommands())
             ->hasInstallCommand(function (InstallCommand $command) {
-                $command
-                    ->publishConfigFile()
-                    ->publishMigrations()
-                    ->askToRunMigrations()
-                    ->askToStarRepoOnGitHub('chrisreedio/socialment-bastion-azure');
+                // $command
+                    // ->publishConfigFile()
+                    // ->publishMigrations()
+                    // ->askToRunMigrations()
+                    // ->askToStarRepoOnGitHub('chrisreedio/socialment-bastion-azure');
             });
 
         $configFileName = $package->shortName();
@@ -65,30 +65,30 @@ class SocialmentBastionAzureServiceProvider extends PackageServiceProvider
     public function packageBooted(): void
     {
         // Asset Registration
-        FilamentAsset::register(
-            $this->getAssets(),
-            $this->getAssetPackageName()
-        );
-
-        FilamentAsset::registerScriptData(
-            $this->getScriptData(),
-            $this->getAssetPackageName()
-        );
+        // FilamentAsset::register(
+        //     $this->getAssets(),
+        //     $this->getAssetPackageName()
+        // );
+        //
+        // FilamentAsset::registerScriptData(
+        //     $this->getScriptData(),
+        //     $this->getAssetPackageName()
+        // );
 
         // Icon Registration
-        FilamentIcon::register($this->getIcons());
+        // FilamentIcon::register($this->getIcons());
 
         // Handle Stubs
-        if (app()->runningInConsole()) {
-            foreach (app(Filesystem::class)->files(__DIR__ . '/../stubs/') as $file) {
-                $this->publishes([
-                    $file->getRealPath() => base_path("stubs/socialment-bastion-azure/{$file->getFilename()}"),
-                ], 'socialment-bastion-azure-stubs');
-            }
-        }
+        // if (app()->runningInConsole()) {
+        //     foreach (app(Filesystem::class)->files(__DIR__ . '/../stubs/') as $file) {
+        //         $this->publishes([
+        //             $file->getRealPath() => base_path("stubs/socialment-bastion-azure/{$file->getFilename()}"),
+        //         ], 'socialment-bastion-azure-stubs');
+        //     }
+        // }
 
         // Testing
-        Testable::mixin(new TestsSocialmentBastionAzure());
+        // Testable::mixin(new TestsSocialmentBastionAzure());
     }
 
     protected function getAssetPackageName(): ?string
@@ -103,8 +103,8 @@ class SocialmentBastionAzureServiceProvider extends PackageServiceProvider
     {
         return [
             // AlpineComponent::make('socialment-bastion-azure', __DIR__ . '/../resources/dist/components/socialment-bastion-azure.js'),
-            Css::make('socialment-bastion-azure-styles', __DIR__ . '/../resources/dist/socialment-bastion-azure.css'),
-            Js::make('socialment-bastion-azure-scripts', __DIR__ . '/../resources/dist/socialment-bastion-azure.js'),
+            // Css::make('socialment-bastion-azure-styles', __DIR__ . '/../resources/dist/socialment-bastion-azure.css'),
+            // Js::make('socialment-bastion-azure-scripts', __DIR__ . '/../resources/dist/socialment-bastion-azure.js'),
         ];
     }
 
@@ -148,7 +148,7 @@ class SocialmentBastionAzureServiceProvider extends PackageServiceProvider
     protected function getMigrations(): array
     {
         return [
-            'create_socialment-bastion-azure_table',
+            // 'create_socialment-bastion-azure_table',
         ];
     }
 }
