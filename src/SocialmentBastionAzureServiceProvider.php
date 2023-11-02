@@ -18,6 +18,7 @@ use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
 use function config_path;
+use function database_path;
 use function file_exists;
 
 class SocialmentBastionAzureServiceProvider extends PackageServiceProvider
@@ -64,11 +65,11 @@ class SocialmentBastionAzureServiceProvider extends PackageServiceProvider
                         $command->call('azure:install:env');
                         // }
 
-                        if ($command->ask('Publish the Bastion Seeder(s)?')) {
-                            $command->comment('Publishing Bastion\'s Seeders...');
+                        if ($command->ask('Publish the Azure Seeder?')) {
+                            $command->comment('Publishing Bastion\'s Azure Seeders...');
                             $command->call('vendor:publish', [
-                                '--provider' => 'ChrisReedIO\Bastion\BastionServiceProvider',
-                                '--tag' => 'bastion-seeders',
+                                // '--provider' => 'ChrisReedIO\SocialmentBastionAzure\SocialmentBastionAzureServiceProvider',
+                                '--tag' => 'socialment-azure-seeder',
                                 '--force' => false,
                             ]);
                         }
@@ -114,6 +115,13 @@ class SocialmentBastionAzureServiceProvider extends PackageServiceProvider
             $this->publishes([
                 $package->basePath('/../config') => config_path(),
             ], 'socialment-azure-config');
+        }
+
+        // Override the base bastion seeder
+        if (file_exists($package->basePath('/../database/seeders'))) {
+            $this->publishes([
+                $package->basePath('/../database/seeders') => database_path('seeders'),
+            ], 'socialment-azure-seeder');
         }
     }
 
