@@ -16,8 +16,7 @@ class RoleSeeder extends Seeder
                 'name' => 'Developer',
                 'guard_name' => $defaultGuard,
                 'sso_group' => match ($environment) {
-                    'local', 'staging' => '',
-                    'production' => '',
+                    'local', 'staging', 'production' => '',
                     default => null,
                 },
             ],
@@ -25,8 +24,7 @@ class RoleSeeder extends Seeder
                 'name' => 'Admin',
                 'guard_name' => $defaultGuard,
                 'sso_group' => match ($environment) {
-                    'local', 'staging' => '',
-                    'production' => '',
+                    'local', 'staging', 'production' => '',
                     default => null,
                 },
             ],
@@ -34,8 +32,7 @@ class RoleSeeder extends Seeder
                 'name' => 'User',
                 'guard_name' => $defaultGuard,
                 'sso_group' => match ($environment) {
-                    'local', 'staging' => '',
-                    'production' => '',
+                    'local', 'staging', 'production' => '',
                     default => null,
                 },
             ],
@@ -43,8 +40,7 @@ class RoleSeeder extends Seeder
                 'name' => 'Viewer',
                 'guard_name' => $defaultGuard,
                 'sso_group' => match ($environment) {
-                    'local', 'staging' => '',
-                    'production' => '',
+                    'local', 'staging', 'production' => '',
                     default => null,
                 },
             ],
