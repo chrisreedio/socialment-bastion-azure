@@ -11,6 +11,7 @@ use Filament\Facades\Filament;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\App;
 use Spatie\Permission\Models\Role;
+
 use function collect;
 use function in_array;
 
@@ -62,7 +63,7 @@ class RoleSeeder extends Seeder
         // Admin
         if ($adminRole->permissions()->count() === 0) {
             $resources = $allResources->filter(function ($resource) {
-                return !in_array($resource, [
+                return ! in_array($resource, [
                     // UserResource::class,
                     RoleResource::class,
                     PermissionResource::class,
@@ -77,7 +78,7 @@ class RoleSeeder extends Seeder
         // User
         if ($userRole->permissions()->count() === 0) {
             $resources = $allResources->filter(function ($resource) {
-                return !in_array($resource, [
+                return ! in_array($resource, [
                     UserResource::class,
                     RoleResource::class,
                     PermissionResource::class,
@@ -98,7 +99,7 @@ class RoleSeeder extends Seeder
         // Viewer
         if ($viewerRole->permissions()->count() === 0) {
             $resources = $allResources->filter(function ($resource) {
-                return !in_array($resource, [
+                return ! in_array($resource, [
                     UserResource::class,
                     RoleResource::class,
                     PermissionResource::class,
