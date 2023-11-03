@@ -17,20 +17,13 @@ class AzureEnvironmentInstallCommand extends Command
     public function handle(): int
     {
         // We need to inject these 4 lines into the .env and .env.example files
-        /*
-            AZURE_TENANT_ID=""
-            AZURE_CLIENT_ID=""
-            AZURE_CLIENT_SECRET=""
-            AZURE_REDIRECT_URI=""
-         */
-
         $additionalLines = [
             '',
             '# Socialment - Azure Provider Variables',
             'AZURE_TENANT_ID=""',
             'AZURE_CLIENT_ID=""',
             'AZURE_CLIENT_SECRET=""',
-            'AZURE_REDIRECT_URI=""',
+            'AZURE_REDIRECT_URI="${APP_URL}/login/azure/callback"',
         ];
 
         $this->injectIntoEnv(base_path('.env'), $additionalLines);
