@@ -1,8 +1,8 @@
-# Provides a Bridge between Socialment, Bastion, and Azure AD.
+# Socialment, Bastion, and Azure AD Unified Integration
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/chrisreedio/socialment-bastion-azure.svg?style=flat-square)](https://packagist.org/packages/chrisreedio/socialment-bastion-azure)
-[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/chrisreedio/socialment-bastion-azure/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/chrisreedio/socialment-bastion-azure/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/chrisreedio/socialment-bastion-azure/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/chrisreedio/socialment-bastion-azure/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
+[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/chrisreedio/socialment-bastion-azure/run-tests.yml?branch=3.x&label=tests&style=flat-square)](https://github.com/chrisreedio/socialment-bastion-azure/actions?query=workflow%3Arun-tests+branch%3A3.x)
+[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/chrisreedio/socialment-bastion-azure/fix-php-code-styling.yml?branch=3.x&label=code%20style&style=flat-square)](https://github.com/chrisreedio/socialment-bastion-azure/actions?query=workflow%3A"Fix+PHP+Code+Styling"+branch%3A3.x)
 [![Total Downloads](https://img.shields.io/packagist/dt/chrisreedio/socialment-bastion-azure.svg?style=flat-square)](https://packagist.org/packages/chrisreedio/socialment-bastion-azure)
 
 
