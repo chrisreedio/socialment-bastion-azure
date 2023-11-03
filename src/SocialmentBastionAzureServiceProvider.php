@@ -2,6 +2,12 @@
 
 namespace ChrisReedIO\SocialmentBastionAzure;
 
+use ChrisReedIO\AzureGraph\GraphConnector;
+use ChrisReedIO\AzureGraph\Requests\Users\Group\MemberOfRequest;
+use ChrisReedIO\Socialment\Exceptions\AbortedLoginException;
+use ChrisReedIO\Socialment\Facades\Socialment;
+use ChrisReedIO\Socialment\Models\ConnectedAccount;
+use ChrisReedIO\SocialmentBastionAzure\Commands\AzureEnvironmentInstallCommand;
 use ChrisReedIO\SocialmentBastionAzure\Commands\SocialmentBastionAzureCommand;
 use ChrisReedIO\SocialmentBastionAzure\Testing\TestsSocialmentBastionAzure;
 use Filament\Support\Assets\AlpineComponent;
@@ -12,9 +18,16 @@ use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Filesystem\Filesystem;
 use Livewire\Features\SupportTesting\Testable;
+use SocialiteProviders\Azure\AzureExtendSocialite;
+use SocialiteProviders\Manager\SocialiteWasCalled;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
+use Spatie\Permission\Models\Role;
+
+use function config_path;
+use function database_path;
+use function file_exists;
 
 class SocialmentBastionAzureServiceProvider extends PackageServiceProvider
 {
@@ -33,16 +46,65 @@ class SocialmentBastionAzureServiceProvider extends PackageServiceProvider
             ->hasCommands($this->getCommands())
             ->hasInstallCommand(function (InstallCommand $command) {
                 $command
-                    ->publishConfigFile()
-                    ->publishMigrations()
-                    ->askToRunMigrations()
-                    ->askToStarRepoOnGitHub('chrisreedio/socialment-bastion-azure');
+                    ->startWith(function (InstallCommand $command) {
+                        $command->comment('Publishing Socialment\'s Migrations...');
+                        // $command->call('socialment:install');
+                        $command->call('vendor:publish', [
+                            '--provider' => 'ChrisReedIO\Socialment\SocialmentServiceProvider',
+                            '--tag' => 'socialment-migrations',
+                        ]);
+
+                        $command->comment('Publishing Spatie\'s Migrations...');
+                        $command->call('vendor:publish', [
+                            '--provider' => 'Spatie\Permission\PermissionServiceProvider',
+                            '--tag' => 'permission-migrations',
+                        ]);
+
+                        // $command->comment('Running Bastion\'s Install...');
+                        // $command->call('bastion:install');
+                        $command->comment('Publishing Bastion\'s Migrations...');
+                        $command->call('vendor:publish', [
+                            '--provider' => 'ChrisReedIO\Bastion\BastionServiceProvider',
+                            '--tag' => 'bastion-migrations',
+                        ]);
+
+                        // if ($command->ask('Would you like to inject the Azure Socialment .env parameters?', 'yes')) {
+                        $command->comment('Patching .env files...');
+                        $command->call('azure:install:env');
+                        // }
+
+                        if ($command->ask('Publish the Azure Seeder?')) {
+                            $command->comment('Publishing Bastion\'s Azure Seeders...');
+                            $command->call('vendor:publish', [
+                                // '--provider' => 'ChrisReedIO\SocialmentBastionAzure\SocialmentBastionAzureServiceProvider',
+                                '--tag' => 'socialment-azure-seeder',
+                                '--force' => false,
+                            ]);
+                        }
+
+                        // if ($command->ask('Would you like to force publish the Services config file?')) {
+                        //     // This will overwrite the config file even if it already exists
+                        //     $command->comment('Publishing Socialment\'s service config file...');
+                        //     $command->call('vendor:publish', [
+                        //         // '--provider' => 'ChrisReedIO\Socialment\SocialmentServiceProvider',
+                        //         '--tag' => 'socialment-bastion-azure-config',
+                        //         '--force' => true,
+                        //     ]);
+                        // }
+                    })
+                    ->endWith(function (InstallCommand $command) {
+
+                    });
+                // ->publishConfigFile();
+                // ->publishMigrations()
+                // ->askToRunMigrations()
+                // ->askToStarRepoOnGitHub('chrisreedio/socialment-bastion-azure');
             });
 
-        $configFileName = $package->shortName();
+        $configFileName = 'services';
 
-        if (file_exists($package->basePath("/../config/{$configFileName}.php"))) {
-            $package->hasConfigFile();
+        if (file_exists($package->basePath('/../config'))) {
+            $package->hasConfigFile(['services']);
         }
 
         if (file_exists($package->basePath('/../database/migrations'))) {
@@ -56,39 +118,74 @@ class SocialmentBastionAzureServiceProvider extends PackageServiceProvider
         if (file_exists($package->basePath('/../resources/views'))) {
             $package->hasViews(static::$viewNamespace);
         }
+
+        if (file_exists($package->basePath('/../config/services.php'))) {
+            $this->publishes([
+                $package->basePath('/../config') => config_path(),
+            ], 'socialment-azure-config');
+        }
+
+        // Override the base bastion seeder
+        if (file_exists($package->basePath('/../database/seeders'))) {
+            $this->publishes([
+                $package->basePath('/../database/seeders') => database_path('seeders'),
+            ], 'socialment-azure-seeder');
+        }
     }
 
     public function packageRegistered(): void
     {
+        // $this->mergeConfigFrom(__DIR__ . '/../config/services.php', 'services');
     }
 
     public function packageBooted(): void
     {
-        // Asset Registration
-        FilamentAsset::register(
-            $this->getAssets(),
-            $this->getAssetPackageName()
-        );
+        $this->mergeListeners();
 
-        FilamentAsset::registerScriptData(
-            $this->getScriptData(),
-            $this->getAssetPackageName()
-        );
+        // Hook the login process and sync the groups
+        app(Socialment::class)::preLogin(function (ConnectedAccount $connectedAccount) {
+            // Handle custom post login logic here.
+            $graph = new GraphConnector($connectedAccount->token);
+            $paginator = $graph->paginate(new MemberOfRequest());
+            $adGroups = $paginator->collect();
+
+            // Dump the user's groups
+            // dd($adGroups->pluck('displayName')->all());
+
+            $roles = Role::all()->filter(function ($role) use ($adGroups) {
+                return $adGroups->pluck('displayName')->contains($role->sso_group);
+            });
+            $connectedAccount->user->roles()->sync($roles);
+
+            if ($connectedAccount->user->roles->isEmpty()) {
+                throw new AbortedLoginException('You are not authorized to access this application.');
+            }
+        });
+        // Asset Registration
+        // FilamentAsset::register(
+        //     $this->getAssets(),
+        //     $this->getAssetPackageName()
+        // );
+        //
+        // FilamentAsset::registerScriptData(
+        //     $this->getScriptData(),
+        //     $this->getAssetPackageName()
+        // );
 
         // Icon Registration
-        FilamentIcon::register($this->getIcons());
+        // FilamentIcon::register($this->getIcons());
 
         // Handle Stubs
-        if (app()->runningInConsole()) {
-            foreach (app(Filesystem::class)->files(__DIR__ . '/../stubs/') as $file) {
-                $this->publishes([
-                    $file->getRealPath() => base_path("stubs/socialment-bastion-azure/{$file->getFilename()}"),
-                ], 'socialment-bastion-azure-stubs');
-            }
-        }
+        // if (app()->runningInConsole()) {
+        //     foreach (app(Filesystem::class)->files(__DIR__ . '/../stubs/') as $file) {
+        //         $this->publishes([
+        //             $file->getRealPath() => base_path("stubs/socialment-bastion-azure/{$file->getFilename()}"),
+        //         ], 'socialment-bastion-azure-stubs');
+        //     }
+        // }
 
         // Testing
-        Testable::mixin(new TestsSocialmentBastionAzure());
+        // Testable::mixin(new TestsSocialmentBastionAzure());
     }
 
     protected function getAssetPackageName(): ?string
@@ -103,8 +200,8 @@ class SocialmentBastionAzureServiceProvider extends PackageServiceProvider
     {
         return [
             // AlpineComponent::make('socialment-bastion-azure', __DIR__ . '/../resources/dist/components/socialment-bastion-azure.js'),
-            Css::make('socialment-bastion-azure-styles', __DIR__ . '/../resources/dist/socialment-bastion-azure.css'),
-            Js::make('socialment-bastion-azure-scripts', __DIR__ . '/../resources/dist/socialment-bastion-azure.js'),
+            // Css::make('socialment-bastion-azure-styles', __DIR__ . '/../resources/dist/socialment-bastion-azure.css'),
+            // Js::make('socialment-bastion-azure-scripts', __DIR__ . '/../resources/dist/socialment-bastion-azure.js'),
         ];
     }
 
@@ -115,6 +212,7 @@ class SocialmentBastionAzureServiceProvider extends PackageServiceProvider
     {
         return [
             SocialmentBastionAzureCommand::class,
+            AzureEnvironmentInstallCommand::class,
         ];
     }
 
@@ -148,7 +246,21 @@ class SocialmentBastionAzureServiceProvider extends PackageServiceProvider
     protected function getMigrations(): array
     {
         return [
-            'create_socialment-bastion-azure_table',
+            // 'create_socialment-bastion-azure_table',
         ];
+    }
+
+    protected function mergeListeners(): void
+    {
+        // Retrieve the existing listeners
+        $listen = $this->app['events']->getListeners(SocialiteWasCalled::class) ?? [];
+
+        // Define your listener if it's not already present
+        if (! in_array(AzureExtendSocialite::class . '@handle', $listen)) {
+            $this->app['events']->listen(
+                SocialiteWasCalled::class,
+                AzureExtendSocialite::class . '@handle'
+            );
+        }
     }
 }

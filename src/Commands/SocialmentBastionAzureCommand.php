@@ -6,9 +6,9 @@ use Illuminate\Console\Command;
 
 class SocialmentBastionAzureCommand extends Command
 {
-    public $signature = 'socialment-bastion-azure';
+    public $signature = 'azure:install';
 
-    public $description = 'My command';
+    public $description = 'Installs the Azure Socialment driver';
 
     public function handle(): int
     {

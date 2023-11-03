@@ -7,7 +7,7 @@
 
 
 
-This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
+This is a **_highly_** opinionated package that provides a bridge between [Socialment](https://github.com/chrisreedio/socialment), [Bastion](https://github.com/chrisreedio/bastion), and [Azure AD](https://github.com/chrisreedio/laravel-azure-graph).
 
 ## Installation
 
@@ -16,38 +16,113 @@ You can install the package via composer:
 ```bash
 composer require chrisreedio/socialment-bastion-azure
 ```
-
-You can publish and run the migrations with:
-
-```bash
-php artisan vendor:publish --tag="socialment-bastion-azure-migrations"
-php artisan migrate
-```
-
-You can publish the config file with:
+Then execute and follow the prompts:
 
 ```bash
-php artisan vendor:publish --tag="socialment-bastion-azure-config"
+php artisan socialment-bastion-azure:install
 ```
 
-Optionally, you can publish the views using
+Include this plugin in your panel configuration:
 
-```bash
-php artisan vendor:publish --tag="socialment-bastion-azure-views"
+```php
+$panel
+    ->plugins([
+        // ... Other Plugins
+        \ChrisReedIO\Bastion\BastionPlugin::make(),
+        \ChrisReedIO\Socialment\SocialmentPlugin::make()
+            ->registerProvider('azure', 'fab-microsoft', 'Azure Active Directory'),
+	])
 ```
 
-This is the contents of the published config file:
+Remember to add the Spatie `HasRoles` trait to your `User` model.
+
+```php
+use Spatie\Permission\Traits\HasRoles;
+
+class User extends Authenticatable
+{
+    use HasRoles;
+}
+```
+
+This additional _glue_ package will automagically hook the pre-login callbacks from Socialment into Bastion's Roles via the SSO Group field.
+
+### Seeder
+
+If you're choosing to use the seeder(s) make sure you add the `RoleSeeder` to your `DatabaseSeeder.php` like this:
+
+```php
+$this->call([
+    // ... Other Seeders
+    RoleSeeder::class,
+]);
+```
+
+Also don't forget to edit the `RoleSeeder.php` to add your own SSO Groups to each Role.
+
+Some example roles have been placed there for you.
+
+## Azure App Registration
+
+### Redirect URL
+
+Ensure that you configure the redirect URL on your app registration and that it matches the value in your `.env` file.
+
+```env
+AZURE_REDIRECT_URI=https://yourdomain.com/login/azure/callback
+```
+
+### Azure Permissions
+
+You will need to grant your app registration the following permissions:
+
+- `Directory.Read.All`
+- `GroupMember.Read.All`
+- `User.Read`
+
+
+### Config
+
+By default, the config does not get published upon install.
+
+This is the contents of the published config `services.php` file:
+
+_It is just the stock services file with the `azure` block added._
 
 ```php
 return [
+    'mailgun' => [
+        'domain' => env('MAILGUN_DOMAIN'),
+        'secret' => env('MAILGUN_SECRET'),
+        'endpoint' => env('MAILGUN_ENDPOINT', 'api.mailgun.net'),
+        'scheme' => 'https',
+    ],
+
+    'postmark' => [
+        'token' => env('POSTMARK_TOKEN'),
+    ],
+
+    'ses' => [
+        'key' => env('AWS_ACCESS_KEY_ID'),
+        'secret' => env('AWS_SECRET_ACCESS_KEY'),
+        'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
+    ],
+
+    'azure' => [
+        'client_id' => env('AZURE_CLIENT_ID'),
+        'client_secret' => env('AZURE_CLIENT_SECRET'),
+        'redirect' => env('AZURE_REDIRECT_URI'),
+        'tenant' => env('AZURE_TENANT_ID'),
+        'proxy' => env('PROXY')  // Optional
+    ],
+
 ];
 ```
 
-## Usage
+You may publish the config after installation with:
 
-```php
-$socialmentBastionAzure = new ChrisReedIO\SocialmentBastionAzure();
-echo $socialmentBastionAzure->echoPhrase('Hello, ChrisReedIO!');
+```bash
+php artisan vendor:publish --tag="socialment-bastion-azure-config"
 ```
 
 ## Testing
