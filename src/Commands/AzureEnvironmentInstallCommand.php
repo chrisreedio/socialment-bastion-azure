@@ -24,6 +24,7 @@ class AzureEnvironmentInstallCommand extends Command
             'AZURE_CLIENT_ID=""',
             'AZURE_CLIENT_SECRET=""',
             'AZURE_REDIRECT_URI="${APP_URL}/login/azure/callback"',
+            '',
         ];
 
         $this->injectIntoEnv(base_path('.env'), $additionalLines);
