@@ -21,8 +21,8 @@
     ],
     "require": {
         "php": "^8.1",
-        "chrisreedio/bastion": "dev-dev",
-        "chrisreedio/laravel-azure-graph": "dev-dev",
+        "chrisreedio/bastion": "^v3.0.0-beta1",
+        "chrisreedio/laravel-azure-graph": "^0.0.2",
         "chrisreedio/socialment": "^3.4.0",
         "filament/filament": "^3.0",
         "illuminate/contracts": "^10.0",
@@ -75,6 +75,6 @@
             }
         }
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "beta",
     "prefer-stable": true
 }
