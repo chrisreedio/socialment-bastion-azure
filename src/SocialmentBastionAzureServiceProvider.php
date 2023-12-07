@@ -7,9 +7,12 @@ use ChrisReedIO\AzureGraph\Requests\Users\Group\MemberOfRequest;
 use ChrisReedIO\Socialment\Exceptions\AbortedLoginException;
 use ChrisReedIO\Socialment\Facades\Socialment;
 use ChrisReedIO\Socialment\Models\ConnectedAccount;
+use ChrisReedIO\Socialment\SocialmentPlugin;
 use ChrisReedIO\SocialmentBastionAzure\Commands\AzureEnvironmentInstallCommand;
 use ChrisReedIO\SocialmentBastionAzure\Commands\SocialmentBastionAzureCommand;
 use ChrisReedIO\SocialmentBastionAzure\Testing\TestsSocialmentBastionAzure;
+use Exception;
+use Filament\Facades\Filament;
 use Filament\Support\Assets\AlpineComponent;
 use Filament\Support\Assets\Asset;
 use Filament\Support\Assets\Css;
@@ -138,54 +141,30 @@ class SocialmentBastionAzureServiceProvider extends PackageServiceProvider
         // $this->mergeConfigFrom(__DIR__ . '/../config/services.php', 'services');
     }
 
+    /**
+     * @throws AbortedLoginException
+     * @throws Exception
+     */
     public function packageBooted(): void
     {
         $this->mergeListeners();
 
-        // Hook the login process and sync the groups
-        app(Socialment::class)::preLogin(function (ConnectedAccount $connectedAccount) {
+        Socialment::preLogin(function (ConnectedAccount $connectedAccount) { // Sets up a hook on the 'plugin' itself
             // Handle custom post login logic here.
-            $graph = new GraphConnector($connectedAccount->token);
-            $paginator = $graph->paginate(new MemberOfRequest());
-            $adGroups = $paginator->collect();
+            $groups = (new GraphConnector($connectedAccount->token))
+                ->users()->groups($connectedAccount->provider_user_id);
 
-            // Dump the user's groups
-            // dd($adGroups->pluck('displayName')->all());
+            // Filter the list of system roles by the groups the user is a member of in Azure AD
+            $roles = Role::all()->filter(fn($role) => $groups->pluck('displayName')->contains($role->sso_group));
 
-            $roles = Role::all()->filter(function ($role) use ($adGroups) {
-                return $adGroups->pluck('displayName')->contains($role->sso_group);
-            });
+            // Sync the user's roles with the filtered list
             $connectedAccount->user->roles()->sync($roles);
 
+            // If the user has no roles, abort the login
             if ($connectedAccount->user->roles->isEmpty()) {
                 throw new AbortedLoginException('You are not authorized to access this application.');
             }
         });
-        // Asset Registration
-        // FilamentAsset::register(
-        //     $this->getAssets(),
-        //     $this->getAssetPackageName()
-        // );
-        //
-        // FilamentAsset::registerScriptData(
-        //     $this->getScriptData(),
-        //     $this->getAssetPackageName()
-        // );
-
-        // Icon Registration
-        // FilamentIcon::register($this->getIcons());
-
-        // Handle Stubs
-        // if (app()->runningInConsole()) {
-        //     foreach (app(Filesystem::class)->files(__DIR__ . '/../stubs/') as $file) {
-        //         $this->publishes([
-        //             $file->getRealPath() => base_path("stubs/socialment-bastion-azure/{$file->getFilename()}"),
-        //         ], 'socialment-bastion-azure-stubs');
-        //     }
-        // }
-
-        // Testing
-        // Testable::mixin(new TestsSocialmentBastionAzure());
     }
 
     protected function getAssetPackageName(): ?string
@@ -256,7 +235,7 @@ class SocialmentBastionAzureServiceProvider extends PackageServiceProvider
         $listen = $this->app['events']->getListeners(SocialiteWasCalled::class) ?? [];
 
         // Define your listener if it's not already present
-        if (! in_array(AzureExtendSocialite::class . '@handle', $listen)) {
+        if (!in_array(AzureExtendSocialite::class . '@handle', $listen)) {
             $this->app['events']->listen(
                 SocialiteWasCalled::class,
                 AzureExtendSocialite::class . '@handle'
