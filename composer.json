@@ -21,9 +21,9 @@
     ],
     "require": {
         "php": "^8.1",
-        "chrisreedio/bastion": "dev-spa",
-        "chrisreedio/laravel-azure-graph": "dev-user-delta",
-        "chrisreedio/socialment": "dev-save-previous-url",
+        "chrisreedio/bastion": "^v3.0.0-beta2",
+        "chrisreedio/laravel-azure-graph": "^0.1.0-beta1",
+        "chrisreedio/socialment": "^v3.5.0-beta1",
         "filament/filament": "^3.0",
         "illuminate/contracts": "^10.0",
         "socialiteproviders/microsoft-azure": "^5.1",
@@ -32,7 +32,7 @@
     "require-dev": {
         "laravel/pint": "^1.0",
         "nunomaduro/collision": "^7.9",
-        "nunomaduro/larastan": "^2.0.1",
+        "larastan/larastan": "^2.0.1",
         "orchestra/testbench": "^8.0",
         "pestphp/pest": "^2.0",
         "pestphp/pest-plugin-arch": "^2.0",
@@ -76,19 +76,5 @@
         }
     },
     "minimum-stability": "dev",
-    "prefer-stable": true,
-    "repositories": [
-        {
-            "type": "path",
-            "url": "/home/chris/dev/chrisreedio/packages/laravel/laravel-azure-graph"
-        },
-        {
-            "type": "path",
-            "url": "/home/chris/dev/chrisreedio/packages/filament/socialment"
-        },
-        {
-            "type": "path",
-            "url": "/home/chris/dev/chrisreedio/packages/filament/bastion"
-        }
-    ]
+    "prefer-stable": true
 }
