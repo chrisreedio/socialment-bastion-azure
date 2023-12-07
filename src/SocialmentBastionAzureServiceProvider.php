@@ -3,24 +3,16 @@
 namespace ChrisReedIO\SocialmentBastionAzure;
 
 use ChrisReedIO\AzureGraph\GraphConnector;
-use ChrisReedIO\AzureGraph\Requests\Users\Group\MemberOfRequest;
 use ChrisReedIO\Socialment\Exceptions\AbortedLoginException;
 use ChrisReedIO\Socialment\Facades\Socialment;
 use ChrisReedIO\Socialment\Models\ConnectedAccount;
-use ChrisReedIO\Socialment\SocialmentPlugin;
 use ChrisReedIO\SocialmentBastionAzure\Commands\AzureEnvironmentInstallCommand;
 use ChrisReedIO\SocialmentBastionAzure\Commands\SocialmentBastionAzureCommand;
-use ChrisReedIO\SocialmentBastionAzure\Testing\TestsSocialmentBastionAzure;
 use Exception;
-use Filament\Facades\Filament;
 use Filament\Support\Assets\AlpineComponent;
 use Filament\Support\Assets\Asset;
 use Filament\Support\Assets\Css;
 use Filament\Support\Assets\Js;
-use Filament\Support\Facades\FilamentAsset;
-use Filament\Support\Facades\FilamentIcon;
-use Illuminate\Filesystem\Filesystem;
-use Livewire\Features\SupportTesting\Testable;
 use SocialiteProviders\Azure\AzureExtendSocialite;
 use SocialiteProviders\Manager\SocialiteWasCalled;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
@@ -155,7 +147,7 @@ class SocialmentBastionAzureServiceProvider extends PackageServiceProvider
                 ->users()->groups($connectedAccount->provider_user_id);
 
             // Filter the list of system roles by the groups the user is a member of in Azure AD
-            $roles = Role::all()->filter(fn($role) => $groups->pluck('displayName')->contains($role->sso_group));
+            $roles = Role::all()->filter(fn ($role) => $groups->pluck('displayName')->contains($role->sso_group));
 
             // Sync the user's roles with the filtered list
             $connectedAccount->user->roles()->sync($roles);
@@ -235,7 +227,7 @@ class SocialmentBastionAzureServiceProvider extends PackageServiceProvider
         $listen = $this->app['events']->getListeners(SocialiteWasCalled::class) ?? [];
 
         // Define your listener if it's not already present
-        if (!in_array(AzureExtendSocialite::class . '@handle', $listen)) {
+        if (! in_array(AzureExtendSocialite::class . '@handle', $listen)) {
             $this->app['events']->listen(
                 SocialiteWasCalled::class,
                 AzureExtendSocialite::class . '@handle'
