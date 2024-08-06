@@ -2,6 +2,4 @@
 
 namespace ChrisReedIO\SocialmentBastionAzure;
 
-class SocialmentBastionAzure
-{
-}
+class SocialmentBastionAzure {}
