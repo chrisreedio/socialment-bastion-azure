@@ -87,9 +87,7 @@ class SocialmentBastionAzureServiceProvider extends PackageServiceProvider
                         //     ]);
                         // }
                     })
-                    ->endWith(function (InstallCommand $command) {
-
-                    });
+                    ->endWith(function (InstallCommand $command) {});
                 // ->publishConfigFile();
                 // ->publishMigrations()
                 // ->askToRunMigrations()
