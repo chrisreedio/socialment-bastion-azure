@@ -20,7 +20,7 @@
         }
     ],
     "require": {
-        "php": "^8.1",
+        "php": "^8.2",
         "chrisreedio/bastion": "^v3.0.0-beta",
         "chrisreedio/laravel-azure-graph": "^0.1.0-beta",
         "chrisreedio/socialment": "^v3.9.1",
