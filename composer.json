@@ -22,7 +22,7 @@
     "require": {
         "php": "^8.2",
         "chrisreedio/bastion": "^v3.0.0-beta",
-        "chrisreedio/laravel-azure-graph": "^0.1.0-beta",
+        "chrisreedio/laravel-azure-graph": "^0.2",
         "chrisreedio/socialment": "^v3.9.1",
         "filament/filament": "^3.0",
         "illuminate/contracts": "^10.0|^11.0",
