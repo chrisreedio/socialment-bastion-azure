@@ -20,6 +20,7 @@ use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Spatie\Permission\Models\Role;
 
+use function collect;
 use function config_path;
 use function database_path;
 use function file_exists;
@@ -144,8 +145,11 @@ class SocialmentBastionAzureServiceProvider extends PackageServiceProvider
             $groups = (new GraphConnector($connectedAccount->token))
                 ->users()->groups($connectedAccount->provider_user_id);
 
+            // Grab the results from the lazy collection
+            $groupNames = collect($groups->pluck('displayName')->all());
+
             // Filter the list of system roles by the groups the user is a member of in Azure AD
-            $roles = Role::all()->filter(fn ($role) => $groups->pluck('displayName')->contains($role->sso_group));
+            $roles = Role::all()->filter(fn ($role) => $groupNames->contains($role->sso_group));
 
             // Sync the user's roles with the filtered list
             $connectedAccount->user->roles()->sync($roles);
