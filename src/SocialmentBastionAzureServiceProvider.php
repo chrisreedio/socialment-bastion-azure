@@ -149,7 +149,7 @@ class SocialmentBastionAzureServiceProvider extends PackageServiceProvider
             $groupNames = collect($groups->pluck('displayName')->all());
 
             // Filter the list of system roles by the groups the user is a member of in Azure AD
-            $roles = Role::all()->filter(fn ($role) => $groupNames->contains($role->sso_group));
+            $roles = Role::all()->filter(fn (Role $role) => $groupNames->contains($role->sso_group));
 
             // Sync the user's roles with the filtered list
             $connectedAccount->user->roles()->sync($roles);
