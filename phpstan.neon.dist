@@ -12,4 +12,6 @@ parameters:
         - stubs/Role.stub
         - stubs/User.stub
         - stubs/ConnectedAccount.stub
+    scanFiles:
+        - stubs/User.stub
 

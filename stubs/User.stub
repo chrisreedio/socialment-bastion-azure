@@ -4,10 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Permission\Models\Role> $roles
+ */
 class User extends Model
 {
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<\Spatie\Permission\Models\Role, \Illuminate\Database\Eloquent\Relations\Pivot>
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<\Spatie\Permission\Models\Role>
      */
     public function roles()
     {
