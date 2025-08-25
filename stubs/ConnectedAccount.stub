@@ -22,7 +22,7 @@ class ConnectedAccount extends Model
     public $provider_user_id;
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\App\Models\User, self, int>
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\App\Models\User, $this, int>
      */
     public function user()
     {

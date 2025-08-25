@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 class User extends Model
 {
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<\Spatie\Permission\Models\Role>
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<\Spatie\Permission\Models\Role, $this, int>
      */
     public function roles()
     {
