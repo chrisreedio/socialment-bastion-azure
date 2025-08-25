@@ -1,0 +1,16 @@
+<?php
+
+namespace Spatie\Permission\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+/**
+ * @property string|null $sso_group
+ */
+class Role extends Model
+{
+    /**
+     * @var string|null
+     */
+    public $sso_group;
+}

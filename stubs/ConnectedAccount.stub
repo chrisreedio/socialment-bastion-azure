@@ -1,0 +1,31 @@
+<?php
+
+namespace ChrisReedIO\Socialment\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+/**
+ * @property-read \App\Models\User $user
+ * @property string $token
+ * @property string $provider_user_id
+ */
+class ConnectedAccount extends Model
+{
+    /**
+     * @var string
+     */
+    public $token;
+
+    /**
+     * @var string
+     */
+    public $provider_user_id;
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\App\Models\User, self, int>
+     */
+    public function user()
+    {
+        // stub
+    }
+}

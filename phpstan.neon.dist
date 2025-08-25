@@ -8,4 +8,8 @@ parameters:
     tmpDir: build/phpstan
     checkOctaneCompatibility: true
     checkModelProperties: true
+    stubFiles:
+        - stubs/Role.stub
+        - stubs/User.stub
+        - stubs/ConnectedAccount.stub
 
