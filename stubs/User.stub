@@ -3,14 +3,17 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Spatie\Permission\Models\Role;
+use Illuminate\Database\Eloquent\Collection;
 
 /**
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Permission\Models\Role> $roles
+ * @property-read Collection<int, Role> $roles
  */
 class User extends Model
 {
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<\Spatie\Permission\Models\Role, $this, int>
+     * @return BelongsToMany<Role, $this>
      */
     public function roles()
     {

@@ -2,10 +2,12 @@
 
 namespace ChrisReedIO\Socialment\Models;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @property-read \App\Models\User $user
+ * @property-read User $user
  * @property string $token
  * @property string $provider_user_id
  */
@@ -22,7 +24,7 @@ class ConnectedAccount extends Model
     public $provider_user_id;
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\App\Models\User, $this, int>
+     * @return BelongsTo<User, self>
      */
     public function user()
     {
